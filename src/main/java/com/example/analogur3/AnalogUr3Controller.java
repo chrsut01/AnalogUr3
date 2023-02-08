@@ -17,7 +17,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.util.Duration;
-
 import java.time.LocalTime;
 
 public class AnalogUr3Controller {
@@ -25,8 +24,6 @@ public class AnalogUr3Controller {
     private Pane pane;
 
     public void initialize() {
-
-
 
       //  Draw Outer Circle
         Circle circle = new Circle(250);
@@ -47,7 +44,7 @@ public class AnalogUr3Controller {
         pane.getChildren().add(circle2);
 
             // Draw Second Line Ticks
-      Double[] points = {542.0,299.0, 542.0,301.0, 545.0,301.0, 545.0,299.0 };
+             Double[] points = {542.0,299.0, 542.0,301.0, 545.0,301.0, 545.0,299.0 };
              for (int count = 0; count < 60; ++count) {
                  // create a new Second Tick and copy existing points into it
                  Polygon secondTick = new Polygon();
@@ -57,17 +54,17 @@ public class AnalogUr3Controller {
 
              }
                  // Draw Five-minute Line Ticks
-                 Double[] points5 = {525.0,298.0, 525.0,302.0, 545.0,302.0, 545.0,298.0 };
-                 for (int count5 = 0; count5 < 60; ++count5) {
+            Double[] points5 = {525.0,298.0, 525.0,302.0, 545.0,302.0, 545.0,298.0 };
+            for (int count5 = 0; count5 < 60; ++count5) {
                      // create a new Second Tick and copy existing points into it
-                     Polygon fiveMinTick = new Polygon();
-                     fiveMinTick.getPoints().addAll(points5);
-                     fiveMinTick.getTransforms().add(Transform.rotate(count5 * 30, 300, 300));
-                     pane.getChildren().add(fiveMinTick);
-                 }
+                 Polygon fiveMinTick = new Polygon();
+                 fiveMinTick.getPoints().addAll(points5);
+                 fiveMinTick.getTransforms().add(Transform.rotate(count5 * 30, 300, 300));
+                 pane.getChildren().add(fiveMinTick);
+            }
 
 
-        // Draw Second Hand
+        // Creates Second Hand
         Line secondHand = new Line();
         secondHand.setStartX(300);
         secondHand.setStartY(300);
@@ -75,27 +72,30 @@ public class AnalogUr3Controller {
         secondHand.setEndY(78);
         pane.getChildren().add(secondHand);
 
-        // Attempt to start second hand at a position based on current time
-        Rotate startSH = new Rotate();
-        startSH.setAngle(LocalTime.now().getSecond() * 6);
+        // Starts second hand at an angle based on current time
+        Rotate secHandAngle = new Rotate();
+        secHandAngle.setAngle(LocalTime.now().getSecond() * 6);
+        secHandAngle.setPivotX(300);
+        secHandAngle.setPivotY(300);
+        secondHand.getTransforms().addAll(secHandAngle);
 
+        // Defines speed and pivot of second hand rotation
         Rotate rotateSH = new Rotate();
         rotateSH.setAngle(rotateSH.getAngle()+.06);
         rotateSH.setPivotX(300);
         rotateSH.setPivotY(300);
 
-
-        //Rotate Second Hand
+        //Rotates second hand smoothly and with accurate time
         Timeline timelineAnimationS = new Timeline(
                 new KeyFrame(Duration.millis(10),
                         e -> {
                             secondHand.getTransforms().addAll(rotateSH);
-                            //startSecondHand.setAngle(startSecondHand.getAngle()+6);
+                            //startSH.setAngle(startSH.getAngle()+6);
                         }
                 )
         );
 
-        // Draw Minute Hand
+        // Creates Minute Hand
         Line minuteHand = new Line();
         minuteHand.setStartX(300);
         minuteHand.setStartY(300);
@@ -104,25 +104,29 @@ public class AnalogUr3Controller {
         minuteHand.setStrokeWidth(10);
         pane.getChildren().add(minuteHand);
 
-        // Attempt to start minute hand at a position based on current time
-        Rotate startMH = new Rotate();
-        startMH.setAngle(LocalTime.now().getMinute() * 6);
+        // Starts minute hand at an angle based on current time
+        Rotate minHandAngle = new Rotate();
+        minHandAngle.setAngle(LocalTime.now().getMinute() * 6);
+        minHandAngle.setPivotX(300);
+        minHandAngle.setPivotY(300);
+        minuteHand.getTransforms().addAll(minHandAngle);
 
+        // Defines speed and pivot of minute hand rotation
         Rotate rotateMH = new Rotate();
         rotateMH.setAngle(rotateMH.getAngle()+.01);
         rotateMH.setPivotX(300);
         rotateMH.setPivotY(300);
+        System.out.println("time is: " + LocalTime.now().getHour()+":"+ LocalTime.now().getMinute()+":"+ LocalTime.now().getSecond());
 
-        //Rotate Minute Hand
+        // Sets minute hand in motion
         Timeline timelineAnimationM = new Timeline(
                 new KeyFrame(Duration.millis(100),
                         e -> {
                             minuteHand.getTransforms().addAll(rotateMH);
-                            //startSecondHand.setAngle(startSecondHand.getAngle()+6);
                         }
                 )
         );
-        // Draw Hour Hand
+        // Creates Hour Hand
         Line hourHand = new Line();
         hourHand.setStartX(300);
         hourHand.setStartY(300);
@@ -131,9 +135,12 @@ public class AnalogUr3Controller {
         hourHand.setStrokeWidth(10);
         pane.getChildren().add(hourHand);
 
-        // Attempt to start hour hand at a position based on current time
-        Rotate startHH = new Rotate();
-        startHH.setAngle(LocalTime.now().getHour() * 30);
+        // Attempt to start hour hand at an angle based on current time
+        Rotate hourHandAngle = new Rotate();
+        hourHandAngle.setAngle(LocalTime.now().getHour() * 30);
+        hourHandAngle.setPivotX(300);
+        hourHandAngle.setPivotY(300);
+        hourHand.getTransforms().addAll(hourHandAngle);
 
         Rotate rotateHH = new Rotate();
         rotateHH.setAngle(rotateHH.getAngle()+.05);
@@ -145,7 +152,6 @@ public class AnalogUr3Controller {
                 new KeyFrame(Duration.seconds(6),
                         e -> {
                             hourHand.getTransforms().addAll(rotateHH);
-                            //startSecondHand.setAngle(startSecondHand.getAngle()+6);
                         }
                 )
         );
