@@ -1,18 +1,20 @@
-package com.example.analogur3;
-// DrawStars.java
+package com.example.analogtur;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class AnalogUr3 extends Application {
+import java.util.Objects;
+
+public class AnalogtUr extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("AnalogUr3.fxml"));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("AnalogtUr.fxml")));
 
         Scene scene = new Scene(root);
-        stage.setTitle("AnalogUr3");
+        stage.setTitle("AnalogtUr");
         stage.setScene(scene);
         stage.show();
     }

@@ -1,27 +1,37 @@
-package com.example.analogur3;
+package com.example.analogtur;
 
-import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
-import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.util.Duration;
-import java.time.LocalTime;
 
-public class AnalogUr3Controller {
+import java.time.LocalTime;
+import java.util.Objects;
+
+public class AnalogtUrController{
     @FXML
     private Pane pane;
+
+    @FXML
+    private TextField alarmHour;
+
+    @FXML
+    private TextField alarmMinute;
+
+    @FXML
+    private TextField alarmSecond;
+
 
     public void initialize() {
 
@@ -54,7 +64,7 @@ public class AnalogUr3Controller {
 
              }
                  // Draw Five-minute Line Ticks
-            Double[] points5 = {525.0,298.0, 525.0,302.0, 545.0,302.0, 545.0,298.0 };
+            Double[] points5 = {515.0,298.0, 515.0,302.0, 545.0,302.0, 545.0,298.0 };
             for (int count5 = 0; count5 < 60; ++count5) {
                      // create a new Second Tick and copy existing points into it
                  Polygon fiveMinTick = new Polygon();
@@ -72,7 +82,7 @@ public class AnalogUr3Controller {
         secondHand.setEndY(78);
         pane.getChildren().add(secondHand);
 
-        // Starts second hand at an angle based on current time
+        // Positions second hand at an angle based on current time
         Rotate secHandAngle = new Rotate();
         secHandAngle.setAngle(LocalTime.now().getSecond() * 6);
         secHandAngle.setPivotX(300);
@@ -81,7 +91,7 @@ public class AnalogUr3Controller {
 
         // Defines speed and pivot of second hand rotation
         Rotate rotateSH = new Rotate();
-        rotateSH.setAngle(rotateSH.getAngle()+.06);
+        rotateSH.setAngle(rotateSH.getAngle()+ .06);
         rotateSH.setPivotX(300);
         rotateSH.setPivotY(300);
 
@@ -90,7 +100,6 @@ public class AnalogUr3Controller {
                 new KeyFrame(Duration.millis(10),
                         e -> {
                             secondHand.getTransforms().addAll(rotateSH);
-                            //startSH.setAngle(startSH.getAngle()+6);
                         }
                 )
         );
@@ -104,7 +113,7 @@ public class AnalogUr3Controller {
         minuteHand.setStrokeWidth(10);
         pane.getChildren().add(minuteHand);
 
-        // Starts minute hand at an angle based on current time
+        // Positions hand at an angle based on current time
         Rotate minHandAngle = new Rotate();
         minHandAngle.setAngle(LocalTime.now().getMinute() * 6);
         minHandAngle.setPivotX(300);
@@ -126,6 +135,7 @@ public class AnalogUr3Controller {
                         }
                 )
         );
+
         // Creates Hour Hand
         Line hourHand = new Line();
         hourHand.setStartX(300);
@@ -135,7 +145,7 @@ public class AnalogUr3Controller {
         hourHand.setStrokeWidth(10);
         pane.getChildren().add(hourHand);
 
-        // Attempt to start hour hand at an angle based on current time
+        // Positions hour hand at an angle based on current time
         Rotate hourHandAngle = new Rotate();
         hourHandAngle.setAngle(LocalTime.now().getHour() * 30);
         hourHandAngle.setPivotX(300);
@@ -156,13 +166,67 @@ public class AnalogUr3Controller {
                 )
         );
 
+        // Prints out time every 10 seconds
+        Timeline printTime = new Timeline(
+                new KeyFrame(Duration.seconds(10),
+                        e -> {
+                            System.out.println("time is: " + LocalTime.now().getHour()+":"+ LocalTime.now().getMinute()+":"+ LocalTime.now().getSecond());
+                             }
+                )
+        );
 
+        // Checks alarm setting with current time once every second and calls alarm (both audio file and print-out)
+        Timeline soundAlarm = new Timeline(
+                new KeyFrame(Duration.seconds(1),
+                        e -> {
+                            //System.out.println("time is: " + LocalTime.now().getHour()+":"+ LocalTime.now().getMinute()+":"+ LocalTime.now().getSecond());
+                            //System.out.println(alarmHour.getText() + ":" + alarmMinute.getText() + ":" + alarmSecond.getText());
+                            if (Objects.equals(alarmHour.getText(), String.valueOf(LocalTime.now().getHour())) &&
+                                    Objects.equals(alarmMinute.getText(), String.valueOf(LocalTime.now().getMinute())) &&
+                                    Objects.equals(alarmSecond.getText(), String.valueOf(LocalTime.now().getSecond())))
+                            {
+                                play();
+                                System.out.println("Alarm!!!");
+                            }
 
+                        }
+                )
+        );
+
+        // Sets off alarm
+        soundAlarm.setCycleCount(Timeline.INDEFINITE);
+        soundAlarm.play();
+        // Sets off printing of time
+        printTime.setCycleCount(Timeline.INDEFINITE);
+        printTime.play();
+        // Sets off movement of second-, minute-, and hour-hands
         timelineAnimationS.setCycleCount(Timeline.INDEFINITE);
         timelineAnimationS.play();
         timelineAnimationM.setCycleCount(Timeline.INDEFINITE);
         timelineAnimationM.play();
         timelineAnimationH.setCycleCount(Timeline.INDEFINITE);
         timelineAnimationH.play();
+        }
+
+
+    // Plays alarm audio file
+    Media media;
+    MediaPlayer mediaPlayer;
+    @FXML
+    void play() {
+        System.out.println("It should be sounding now");
+        media = new Media(String.valueOf(getClass().getResource("beep-alarm.mp3")));
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.seek(mediaPlayer.getStartTime());
+        mediaPlayer.play();
+        }
+
+   // Turns off alarm and clears alarm TextArea fields
+    @FXML
+    void stopAlarm(ActionEvent event) {
+        alarmSecond.clear();
+        alarmMinute.clear();
+        alarmHour.clear();
+        mediaPlayer.stop();
     }
 }
