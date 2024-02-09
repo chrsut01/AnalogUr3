@@ -65,7 +65,7 @@ public class AnalogtUrController{
              }
                  // Draw Five-minute Line Ticks
             Double[] points5 = {515.0,298.0, 515.0,302.0, 545.0,302.0, 545.0,298.0 };
-            for (int count5 = 0; count5 < 60; ++count5) {
+            for (int count5 = 0; count5 < 12; ++count5) {
                      // create a new Second Tick and copy existing points into it
                  Polygon fiveMinTick = new Polygon();
                  fiveMinTick.getPoints().addAll(points5);
